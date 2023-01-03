@@ -1,21 +1,47 @@
 addEventListener("fetch", event => {
-    const url = new URL(event.request.url);
-    if (url.pathname === '/download') {
-      event.respondWith(handleDownloadRequest(event.request));
-    } else {
-      event.respondWith(handleRequest(event.request))
-    }
-  });
-  
-  async function handleDownloadRequest(request) {
+  const url = new URL(event.request.url);
+  if (url.pathname === '/download') {
+    event.respondWith(handleDownloadRequest(event.request));
+  } else {
+    event.respondWith(handleRequest(event.request))
+  }
+});
+
+async function handleDownloadRequest(request) {
+  try {
+    // Parse the URL for any necessary parameters
+    const url = new URL(request.url);
+    const link = url.searchParams.get('link');
+
+    // Fetch the file from the download link
+    const response = await fetch(link)
+
+    // Return the file as the response
+    return new Response(response.body, {
+      headers: {
+        "Content-Type": response.headers.get("Content-Type"),
+        "Content-Disposition": `attachment; filename=${link.split("/").pop()}`,
+      },
+    })
+  } catch (error) {
+    // Return a custom error message in the response
+    return new Response(`Dit bestand klinkt niet legit broer. Probeer nog maar een keer. `, {
+      status: 500,
+      headers: { "Content-Type": "text/plain" },
+    })
+  }
+}
+
+async function handleRequest(request) {
+  // Check if the request is a POST request
+  if (request.method === "POST") {
+    // Get the link from the request body
+    const formData = await request.formData()
+    const link = formData.get("link")
+
     try {
-      // Parse the URL for any necessary parameters
-      const url = new URL(request.url);
-      const link = url.searchParams.get('link');
-  
       // Fetch the file from the download link
       const response = await fetch(link)
-  
       // Return the file as the response
       return new Response(response.body, {
         headers: {
@@ -30,36 +56,10 @@ addEventListener("fetch", event => {
         headers: { "Content-Type": "text/plain" },
       })
     }
-  }
-  
-  async function handleRequest(request) {
-    // Check if the request is a POST request
-    if (request.method === "POST") {
-      // Get the link from the request body
-      const formData = await request.formData()
-      const link = formData.get("link")
-  
-      try {
-        // Fetch the file from the download link
-        const response = await fetch(link)
-        // Return the file as the response
-        return new Response(response.body, {
-          headers: {
-            "Content-Type": response.headers.get("Content-Type"),
-            "Content-Disposition": `attachment; filename=${link.split("/").pop()}`,
-          },
-        })
-      } catch (error) {
-          // Return a custom error message in the response
-          return new Response(`Dit bestand klinkt niet legit broer. Probeer nog maar een keer. `, {
-          status: 500,
-          headers: { "Content-Type": "text/plain" },
-        })
-      }
-      
-    } else {
-      // Create the HTML for the download form
-      const html = `
+
+  } else {
+    // Create the HTML for the download form
+    const html = `
         <html>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
@@ -99,10 +99,10 @@ addEventListener("fetch", event => {
         </div>
         </html>
       `;
-  
-      // Return the HTML as the response
-      return new Response(html, {
-        headers: { "Content-Type": "text/html" },
-      })
-    }
+
+    // Return the HTML as the response
+    return new Response(html, {
+      headers: { "Content-Type": "text/html" },
+    })
   }
+}
