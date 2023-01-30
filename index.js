@@ -92,27 +92,15 @@ async function handleRequest(request) {
                     <label for="link">Gib link: (should end with filename.extension)</label><br>
                     <input type="text" id="link" name="link"><br>
                     <br>
-                    <button id="download-button" class="btn btn-dark">Download</button>
-                    <button id="copy-button" class="btn btn-secondary">Copy</button>
+                    <button type="submit" class="btn btn-dark">Download</button>
+                    <button type="button" class="btn btn-dark" onclick="copyLink()">Copy</button>
                 </form>
             <script>
-                document.getElementById("download-button").addEventListener("click", function() {
-                    const input = document.getElementById("link");
-                    const link = "https://download.wilmerdrive.nl/download?link=" + input.value;
-                    window.location = link;
-                });
-
-                document.getElementById("copy-button").addEventListener("click", function(event) {
-                    event.preventDefault();
-                    const input = document.getElementById("link");
-                    const link = "https://download.wilmerdrive.nl/download?link=" + input.value;
-
-                    navigator.clipboard.writeText(link).then(function() {
-                        console.log("Copied to clipboard");
-                    }, function(err) {
-                        console.error("Could not copy text: ", err);
-                    });
-                });
+                function copyLink() {
+                    var link = document.getElementById("link").value;
+                    var fullLink = "https://download.wilmerdrive.nl/download?link=" + link;
+                    navigator.clipboard.writeText(fullLink);
+                }
             </script>
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
             <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
