@@ -96,15 +96,9 @@ async function handleRequest(request) {
                     <input type="text" id="link" name="link"><br>
                     <br>
                     <button type="submit" class="btn btn-dark">Download</button>
-                    <button type="button" class="btn btn-dark" onclick="copyLink()">Copy</button>
-                    <button type="button" class="btn btn-dark" onclick="encryptLink()">Encrypt</button>
+                    <button type="button" class="btn btn-dark" onclick="encryptLink()">Copy Link</button>
                 </form>
             <script>
-                function copyLink() {
-                    var link = document.getElementById("link").value;
-                    var fullLink = "https://download.wilmerdrive.nl/download?link=" + link;
-                    navigator.clipboard.writeText(fullLink);
-                }
                 function encryptLink() {
                     var link = document.getElementById("link").value;
                     var encryptedLink = btoa(link);
