@@ -11,7 +11,10 @@ async function handleDownloadRequest(request) {
     try {
         // Parse the URL for any necessary parameters
         const url = new URL(request.url);
-        const link = url.searchParams.get('link');
+        const encodedLink = url.searchParams.get('encoded_link');
+
+        // Decode the Base64 encoded string to get the actual download link
+        const link = atob(encodedLink);
 
         // Fetch the file from the download link
         const response = await fetch(link)
@@ -94,12 +97,19 @@ async function handleRequest(request) {
                     <br>
                     <button type="submit" class="btn btn-dark">Download</button>
                     <button type="button" class="btn btn-dark" onclick="copyLink()">Copy</button>
+                    <button type="button" class="btn btn-dark" onclick="encryptLink()">Encrypt</button>
                 </form>
             <script>
                 function copyLink() {
                     var link = document.getElementById("link").value;
                     var fullLink = "https://download.wilmerdrive.nl/download?link=" + link;
                     navigator.clipboard.writeText(fullLink);
+                }
+                function encryptLink() {
+                    var link = document.getElementById("link").value;
+                    var encryptedLink = btoa(link);
+                    encryptedLink = "https://download.wilmerdrive.nl/download?encoded_link=" + encryptedLink;
+                    navigator.clipboard.writeText(encryptedLink);
                 }
             </script>
             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
